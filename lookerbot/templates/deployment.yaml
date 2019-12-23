@@ -29,6 +29,7 @@ spec:
             - name: {{ $key }}
               value: {{ $val | quote }}
             {{- end}}
+            {{- if .Values.secret.enabled -}}
             {{- range $key, $val := .Values.secret.data }}
             - name: {{ $key }}
               valueFrom:
@@ -36,12 +37,14 @@ spec:
                   name: {{ $secretname }}
                   key: {{ $key }}
             {{- end}}
+            {{- else -}}
             {{- range $key, $val := .Values.externalSecret.dataKeys }}
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.externalSecret.name }}
                   key: {{ $val }}
+            {{- end}}
             {{- end}}
           ports:
             - name: http
@@ -56,16 +59,16 @@ spec:
               path: /
               port: http
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+  {{ toYaml .Values.resources | indent 12 }}
+  {{- with .Values.nodeSelector }}
+nodeSelector:
+  {{ toYaml . | indent 8 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+affinity:
+  {{ toYaml . | indent 8 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+tolerations:
+  {{ toYaml . | indent 8 }}
+  {{- end }}
