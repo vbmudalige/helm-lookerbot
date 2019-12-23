@@ -1,4 +1,4 @@
-{{- $secretname := include "hyperopt.fullname" . -}}
+{{- $secretname := include "lookerbot.fullname" . -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
